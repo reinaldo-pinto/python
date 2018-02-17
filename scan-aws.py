@@ -7,11 +7,19 @@ status = 'available'
 
 volume = ec2.describe_volumes(Filters=[{'Name': filtered, 'Values': [status]}])
 
-#declaring list:
-#vols = []
-print("\nVolumes without association the none resource:\n")
+vol_list = []
 for i in volume['Volumes']:
-    print("ID: " + i['VolumeId'] + "\tSize: " + str(i['Size']) + "G" + "\tStatus: " + i['State'])
-    #is possible use list: 
-    #vols.append(i['VolumeId'])
-    #vols.append(i['Size'])
+    data_list = {"ID": i['VolumeId'], "Size": str(i['Size'])+"G", "Status": i['State']}
+    vol_list.append(data_list)
+
+result = {"Volumes": vol_list}
+print("\nVolumes without association the none resource:\n")
+print result
+
+arquivo = open('s3file.txt', 'w')
+arquivo.write(str(result))
+arquivo.close()
+
+s3_service = boto3.resource('s3')
+bucket = "devops-files-"
+s3_service.Bucket(bucket).upload_file("s3file.txt", "s3file.txt")
