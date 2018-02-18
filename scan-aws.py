@@ -23,7 +23,11 @@ def lambda_handler(event, context):
     print("\nVolumes without association the none resource:\n")
     print(result)
 
-    arquivo = open('/tmp/s3file.txt', 'w')
+    pathfile_add_region = '/tmp/' + region
+    pathfile = pathfile_add_region+'_volumes.txt'
+    arquivo = open(pathfile, 'w')
     arquivo.write(str(result))
     arquivo.close()
-    s3_service.Bucket(bucket).upload_file("/tmp/s3file.txt", "s3file.txt")
+
+    s3_file = region + '_volumes.txt'
+    s3_service.Bucket(bucket).upload_file(pathfile, s3_file)
