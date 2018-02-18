@@ -1,10 +1,14 @@
 import boto3
+import os
 
+bucket = os.environ['s3_bucket']
+filtered = os.environ['type_filtered']
+status = os.environ['status_disk']
+region = os.environ['region']
+
+ec2 = boto3.setup_default_session(region_name=region)
 ec2 = boto3.client('ec2')
 s3_service = boto3.resource('s3')
-bucket = "devops-files-"
-filtered = 'status'
-status = 'available'
 
 def lambda_handler(event, context):
 
@@ -12,7 +16,7 @@ def lambda_handler(event, context):
 
     vol_list = []
     for i in volume['Volumes']:
-        data_list = {"ID": i['VolumeId'], "Size": str(i['Size'])+"G", "Status": i['State']}
+        data_list = {"ID": i['VolumeId'],"Size": str(i['Size'])+"G", "Status": i['State']}
         vol_list.append(data_list)
 
     result = {"Volumes": vol_list}
